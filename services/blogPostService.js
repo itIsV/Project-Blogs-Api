@@ -72,7 +72,22 @@ const getAllBlogPost = async (token) => {
   }
 };
 
+const getBlogPostByID = async (token, id) => {
+  if (!token) return { code: 'UNAUTHORIZED', err: { message: 'Token not found' } };
+  try {
+    await jwt.verify(token, secret);
+    return BlogPost.findOne({
+      where: { id },
+      include: [{ model: User, as: 'user' },
+        { model: Category, as: 'categories', through: { attributes: [] } }],
+    });
+  } catch (err) {
+    console.log(err.message);
+    return { code: 'UNAUTHORIZED', err: { message: 'Expired or invalid token' } };
+  }
+};
 module.exports = {
   addBlogPost,
   getAllBlogPost,
+  getBlogPostByID,
 };

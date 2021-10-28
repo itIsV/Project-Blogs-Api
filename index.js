@@ -14,6 +14,7 @@ app.get('/', (request, response) => {
   response.send();
 });
 
+// userController
 app.post('/user', userController.addNewUser);
 app.get('/user', userController.getAllUsers);
 app.get('/user/:id', userController.getUserByID);
@@ -27,3 +28,4 @@ app.get('/categories', categoryController.getAllCategory);
 // postController
 app.post('/post', blogPostController.addBlogPost);
 app.get('/post', blogPostController.getAllBlogPost);
+app.get('/post/:id', blogPostController.getBlogPostByID);

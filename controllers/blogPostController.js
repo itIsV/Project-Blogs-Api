@@ -36,7 +36,26 @@ const getAllBlogPost = async (req, res) => {
   return res.status(status.OK).json(AllBlogPost);
 };
 
+const getBlogPostByID = async (req, res) => {
+  const { headers: { authorization: token }, params: { id } } = req;
+  
+    const BlogPost = await blogPostService.getBlogPostByID(token, id);
+  
+    if (!BlogPost) {
+      return res.status(status.NOT_FOUND).json({
+        message: 'Post does not exist',
+      });
+    }
+    
+    if (BlogPost.err) {
+      return res.status(status[BlogPost.code]).json(BlogPost.err);
+  }
+
+  return res.status(status.OK).json(BlogPost);
+};
+
 module.exports = {
   addBlogPost,
   getAllBlogPost,
+  getBlogPostByID,
 };
