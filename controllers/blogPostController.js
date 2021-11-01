@@ -81,7 +81,7 @@ const destroyBlogPostByID = async (req, res) => {
     return res.status(status[delBlogPost.code]).json(delBlogPost.err);
   }
 
-  return res.status(status.NO_CONTENT).json(delBlogPost);
+  return res.status(status.NO_CONTENT).json();
 };
 
 module.exports = {
