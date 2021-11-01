@@ -20,6 +20,7 @@ Projeto realizado na escola Trybe, que constrói um back-end usando `ORM` com o 
     - [8 - Sua aplicação deve ter o endpoint GET `/post`](#8---sua-aplicação-deve-ter-o-endpoint-get-post)
     - [9 - Sua aplicação deve ter o endpoint GET `post/:id`](#9---sua-aplicação-deve-ter-o-endpoint-get-postid)
     - [10 - Sua aplicação deve ter o endpoint PUT `/post/:id`](#10---sua-aplicação-deve-ter-o-endpoint-put-postid)
+    - [11 - Sua aplicação deve ter o endpoint DELETE `post/:id`](#11---sua-aplicação-deve-ter-o-endpoint-delete-postid)
 
 # Habilidades 
 
@@ -692,5 +693,49 @@ Se não conter o campo `title` o resultado retornado deverá ser conforme exibid
 Se não conter o campo `content` o resultado retornado deverá ser conforme exibido abaixo, com um status http `400`:
 
 ![blogpost com token inválido](./public/editarsemcontent.png)
+
+### 11 - Sua aplicação deve ter o endpoint DELETE `post/:id`
+
+#### Os seguintes pontos serão avaliados:
+
+- Deleta o post com o `id` especificado. Só deve ser permitido para o usuário que criou o **BlogPost**.
+
+- Caso uma pessoa diferente de quem criou faça a requisição, deve retornar um código `status 401`.
+
+- Caso uma requisição sem token seja recebida, deve-se retornar um código de `status 401`.
+
+- Caso o post referido não exista, deve-se retornar um código de `status 404`.
+
+### Além disso, as seguintes verificações serão feitas:
+
+**[Será validado que é possível deletar um blogpost com sucesso]**
+
+Se deletar blogpost com sucesso o resultado retornado deverá ser conforme exibido abaixo, com um status http `204`:
+
+![blogpost com token inválido](./public/deletarpostcomsucesso.png)
+
+**[Será validado que não é possível deletar um blogpost com outro usuário]**
+
+Se não for o dono do blogpost o resultado retornado deverá ser conforme exibido abaixo, com um status http `401`:
+
+![blogpost com token inválido](./public/deletarpostcomoutrousuario.png)
+
+**[Será validado que não é possível deletar um blogpost inexistente]**
+
+Se o blogpost nao existir o resultado retornado deverá ser conforme exibido abaixo, com um status http `404`:
+
+![blogpost com token inválido](./public/deletarpostquenaoexiste.png)
+
+**[Será validado que não é possível deletar um blogpost sem o token]**
+
+Se não contém o token o resultado retornado deverá ser conforme exibido abaixo, com um status http `401`:
+
+![blogpost com token inválido](./public/deletarpostsemtoken.png)
+
+**[Será validado que não é possível deletar um blogpost com o token inválido]**
+
+Se o token for inválido o resultado retornado deverá ser conforme exibido abaixo, com um status http `401`:
+
+![blogpost com token inválido](./public/deletarpostcomtokeninvalido.png)
 
 --- 
