@@ -174,11 +174,9 @@ const destroyBlogPostByID = async (token, id) => {
     const { dataValues: { userId } } = post;
     const isValid = await destroyBlogPostByIDValidations(token, userId);
     if (isValid.err) return isValid;
-    const del = await BlogPost.destroy(
+    return BlogPost.destroy(
       { where: { id } },
     );
-    console.log(del);
-    return { oi: 'oi' };
   } catch (err) {
     console.log(err.message);
     return { code: 'NOT_FOUND', err: { message: 'Post does not exist' } };
