@@ -99,7 +99,7 @@ const editRequiredFields = (title, content) => {
   return true;
 };
 
-const editBlogPostByIDValidations = async (token, userID, title, content) => {
+const editBlogPostByIDValidations = async (token, userId, title, content) => {
   try {
     const hasTitleAndContent = editRequiredFields(title, content);
     if (hasTitleAndContent.err) return hasTitleAndContent;
@@ -110,7 +110,7 @@ const editBlogPostByIDValidations = async (token, userID, title, content) => {
       attributes: ['id'],
     });
     
-    const isValid = Number(id) === Number(userID)
+    const isValid = Number(id) === Number(userId)
       ? true
       : { code: 'UNAUTHORIZED', err: { message: 'Unauthorized user' } };
 
@@ -124,10 +124,11 @@ const editBlogPostByIDValidations = async (token, userID, title, content) => {
 const editBlogPostByID = async (token, id, title, content) => {
   if (!token) return { code: 'UNAUTHORIZED', err: { message: 'Token not found' } };
   
-  const isValid = await editBlogPostByIDValidations(token, id, title, content);
-  if (isValid.err) return isValid;
-  
   try {
+    const { dataValues: { userId } } = await getBlogPostByID(token, id);
+    const isValid = await editBlogPostByIDValidations(token, userId, title, content);
+    if (isValid.err) return isValid;
+    
     await BlogPost.update({ title, content }, { where: { id } });
     return BlogPost.findOne({
       where: { id },
@@ -143,9 +144,46 @@ const editBlogPostByID = async (token, id, title, content) => {
   }
 };
 
+// const delBlogPostByIDValidations = async (token, id) => {
+//   try {
+//     const { payload: { email } } = await jwt.verify(token, secret);
+
+//     const { dataValues: { id } } = await User.findOne({
+//       where: { email },
+//       attributes: ['id'],
+//     });
+    
+//     const isValid = Number(id) === Number(userID)
+//       ? true
+//       : { code: 'UNAUTHORIZED', err: { message: 'Unauthorized user' } };
+
+//     return isValid;
+//   } catch (err) {
+//     console.log(err.message);
+//     return { code: 'UNAUTHORIZED', err: { message: invalidTkn } };
+//   }
+// };
+
+// const destroyBlogPostByID = async (token, id) => {
+//   if (!token) return { code: 'UNAUTHORIZED', err: { message: 'Token not found' } };
+  
+//   const isValid = await delBlogPostByIDValidations(token, id);
+//   if (isValid.err) return isValid;
+  
+//   try {
+//     return BlogPost.destroy(
+//       { where: { id } },
+//     );
+//   } catch (err) {
+//     console.log(err.message);
+//     return { code: 'UNAUTHORIZED', err: { message: invalidTkn } };
+//   }
+// };
+
 module.exports = {
   addBlogPost,
   getAllBlogPost,
   getBlogPostByID,
   editBlogPostByID,
+  // destroyBlogPostByID,
 };
