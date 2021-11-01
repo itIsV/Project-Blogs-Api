@@ -54,8 +54,27 @@ const getBlogPostByID = async (req, res) => {
   return res.status(status.OK).json(BlogPost);
 };
 
+const editBlogPostByID = async (req, res) => {
+  const { headers: { authorization: token }, params: { id },
+    body: { title, content, categoryIds } } = req;
+    
+  if (categoryIds) {
+    return res.status(status.BAD_REQUEST).json({
+      message: 'Categories cannot be edited',
+    });
+  }
+  
+  const BlogPost = await blogPostService.editBlogPostByID(token, id, title, content);
+  if (BlogPost.err) {
+    return res.status(status[BlogPost.code]).json(BlogPost.err);
+  }
+
+  return res.status(status.OK).json(BlogPost);
+};
+
 module.exports = {
   addBlogPost,
   getAllBlogPost,
   getBlogPostByID,
+  editBlogPostByID,
 };

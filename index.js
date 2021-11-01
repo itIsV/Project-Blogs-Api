@@ -29,3 +29,4 @@ app.get('/categories', categoryController.getAllCategory);
 app.post('/post', blogPostController.addBlogPost);
 app.get('/post', blogPostController.getAllBlogPost);
 app.get('/post/:id', blogPostController.getBlogPostByID);
+app.put('/post/:id', blogPostController.editBlogPostByID);
