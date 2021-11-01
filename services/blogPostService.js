@@ -7,11 +7,12 @@ const { BlogPost, User, Category } = require('../models');
 const secret = 'Nanii!!!';
 
 const invalidTkn = 'Expired or invalid token';
+const tknNotFOund = 'Token not found';
 
 const hasRequiredFields = (token, title, content, categoryIds) => {
   switch (true) {
     case !token: return { code: 'UNAUTHORIZED',
-    err: { message: 'Token not found' } };
+    err: { message: tknNotFOund } };
 
     case !title: return { code: 'BAD_REQUEST',
     err: { message: '"title" is required' } };
@@ -61,7 +62,7 @@ const addBlogPost = async (token, title, content, categoryIds) => {
 };
 
 const getAllBlogPost = async (token) => {
-  if (!token) return { code: 'UNAUTHORIZED', err: { message: 'Token not found' } };
+  if (!token) return { code: 'UNAUTHORIZED', err: { message: tknNotFOund } };
   try {
     await jwt.verify(token, secret);
     return BlogPost.findAll({
@@ -75,7 +76,7 @@ const getAllBlogPost = async (token) => {
 };
 
 const getBlogPostByID = async (token, id) => {
-  if (!token) return { code: 'UNAUTHORIZED', err: { message: 'Token not found' } };
+  if (!token) return { code: 'UNAUTHORIZED', err: { message: tknNotFOund } };
   try {
     await jwt.verify(token, secret);
     return BlogPost.findOne({
@@ -99,7 +100,7 @@ const editRequiredFields = (title, content) => {
   return true;
 };
 
-const editBlogPostByIDValidations = async (token, userID, title, content) => {
+const editBlogPostByIDValidations = async (token, userId, title, content) => {
   try {
     const hasTitleAndContent = editRequiredFields(title, content);
     if (hasTitleAndContent.err) return hasTitleAndContent;
@@ -110,7 +111,7 @@ const editBlogPostByIDValidations = async (token, userID, title, content) => {
       attributes: ['id'],
     });
     
-    const isValid = Number(id) === Number(userID)
+    const isValid = Number(id) === Number(userId)
       ? true
       : { code: 'UNAUTHORIZED', err: { message: 'Unauthorized user' } };
 
@@ -122,12 +123,13 @@ const editBlogPostByIDValidations = async (token, userID, title, content) => {
 };
 
 const editBlogPostByID = async (token, id, title, content) => {
-  if (!token) return { code: 'UNAUTHORIZED', err: { message: 'Token not found' } };
-  
-  const isValid = await editBlogPostByIDValidations(token, id, title, content);
-  if (isValid.err) return isValid;
+  if (!token) return { code: 'UNAUTHORIZED', err: { message: tknNotFOund } };
   
   try {
+    const { dataValues: { userId } } = await getBlogPostByID(token, id);
+    const isValid = await editBlogPostByIDValidations(token, userId, title, content);
+    if (isValid.err) return isValid;
+    
     await BlogPost.update({ title, content }, { where: { id } });
     return BlogPost.findOne({
       where: { id },
@@ -143,9 +145,50 @@ const editBlogPostByID = async (token, id, title, content) => {
   }
 };
 
+const destroyBlogPostByIDValidations = async (token, userId) => {
+  try {
+    const { payload: { email } } = await jwt.verify(token, secret);
+
+    const { dataValues: { id } } = await User.findOne({
+      where: { email },
+      attributes: ['id'],
+    });
+    
+    const isValid = Number(id) === Number(userId)
+      ? true
+      : { code: 'UNAUTHORIZED', err: { message: 'Unauthorized user' } };
+
+    return isValid;
+  } catch (err) {
+    console.log(err.message);
+    return { code: 'UNAUTHORIZED', err: { message: invalidTkn } };
+  }
+};
+
+const destroyBlogPostByID = async (token, id) => {
+  if (!token) return { code: 'UNAUTHORIZED', err: { message: tknNotFOund } };
+  
+  try {
+    const post = await getBlogPostByID(token, id);
+    if (post.err) return post;
+    const { dataValues: { userId } } = post;
+    const isValid = await destroyBlogPostByIDValidations(token, userId);
+    if (isValid.err) return isValid;
+    const del = await BlogPost.destroy(
+      { where: { id } },
+    );
+    console.log(del);
+    return { oi: 'oi' };
+  } catch (err) {
+    console.log(err.message);
+    return { code: 'NOT_FOUND', err: { message: 'Post does not exist' } };
+  }
+};
+
 module.exports = {
   addBlogPost,
   getAllBlogPost,
   getBlogPostByID,
   editBlogPostByID,
+  destroyBlogPostByID,
 };

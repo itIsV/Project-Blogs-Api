@@ -30,3 +30,4 @@ app.post('/post', blogPostController.addBlogPost);
 app.get('/post', blogPostController.getAllBlogPost);
 app.get('/post/:id', blogPostController.getBlogPostByID);
 app.put('/post/:id', blogPostController.editBlogPostByID);
+app.delete('/post/:id', blogPostController.destroyBlogPostByID);
