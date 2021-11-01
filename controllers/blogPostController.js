@@ -3,6 +3,7 @@ const blogPostService = require('../services/blogPostService');
 const status = {
   OK: 200,
   CREATED: 201,
+  NO_CONTENT: 204,
   BAD_REQUEST: 400,
   UNAUTHORIZED: 401,
   NOT_FOUND: 404,
@@ -72,9 +73,21 @@ const editBlogPostByID = async (req, res) => {
   return res.status(status.OK).json(BlogPost);
 };
 
+const destroyBlogPostByID = async (req, res) => {
+  const { headers: { authorization: token }, params: { id } } = req;
+  
+  const delBlogPost = await blogPostService.destroyBlogPostByID(token, id);
+  if (delBlogPost.err) {
+    return res.status(status[delBlogPost.code]).json(delBlogPost.err);
+  }
+
+  return res.status(status.NO_CONTENT).json(delBlogPost);
+};
+
 module.exports = {
   addBlogPost,
   getAllBlogPost,
   getBlogPostByID,
   editBlogPostByID,
+  destroyBlogPostByID,
 };
