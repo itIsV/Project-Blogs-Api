@@ -37,7 +37,8 @@ Projeto realizado na escola Trybe, que constrói um back-end usando `ORM` com o 
 1. Clone o repositório
   * `git clone git@github.com:itIsV/Project-Blogs-Api.git`.
 
-2. cd Project-Blogs-Api.git
+2. Entre na pasta do projeto 
+  * `cd Project-Blogs-Api`
 
 3. Instale as dependências
   * `npm install`
