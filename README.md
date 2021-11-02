@@ -1,5 +1,6 @@
 # Boas vindas ao repositório do API de Blogs!
-Projeto realizado na escola Trybe, que constrói um back-end usando `ORM` com o pacote `sequelize` do `npm`.
+Projeto realizado na escola Trybe, que construí um back-end usando `ORM` com o pacote `sequelize` do `npm`.
+
 ---
 
 # Sumário
